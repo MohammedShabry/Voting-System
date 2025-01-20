@@ -4,7 +4,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import Navbar from "./navbar";
 
-
 // Simulate fetching candidate data from an API
 const fetchCandidates = async () => {
   return [
