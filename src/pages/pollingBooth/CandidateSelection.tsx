@@ -4,7 +4,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import Navbar from "./navbar";
 
-// Simulate fetching candidate data from an API
 const fetchCandidates = async () => {
   return [
     { id: 23, name: { en: "Anura Kumara Dissanayake", si: "අනුර කුමාර දිසානායක", ta: "அநுர குமார திசாநாயக்க" }, party: "NPP", symbol: "🌱" },
@@ -28,48 +27,40 @@ const CandidateSelection = () => {
   const [candidates, setCandidates] = useState<any[]>([]);
   const [selectedCandidates, setSelectedCandidates] = useState<number[]>([]);
   const [isSpeakerEnabled, setSpeakerEnabled] = useState<boolean>(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null); // Ref for audio element to avoid conflicts
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Handle audio play function for different actions
   const playAudio = (type: string) => {
-    if (typeof window !== "undefined") { // Check if we're in the browser
+    if (typeof window !== "undefined") {
       if (audioRef.current) {
-        audioRef.current.pause(); // Pause any playing audio
-        audioRef.current.currentTime = 0; // Reset to start
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
       }
       const audio = new Audio(`/audio/${type}_${locale}.mp3`);
-      audioRef.current = audio; // Assign to ref to control it
-      audio.play(); // Play the audio
+      audioRef.current = audio;
+      audio.play();
     }
   };
+
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const newAudioInstance = new Audio(); // Create new audio instance
-      // setAudioInstance(newAudioInstance); // Store it in state
-
-      // Load speaker state from localStorage
       const savedSpeakerState = localStorage.getItem("isSpeakerEnabled");
       if (savedSpeakerState !== null) {
         setSpeakerEnabled(JSON.parse(savedSpeakerState));
       }
     }
-  }, []); 
+  }, []);
 
-  // Fetch candidates data on page load
   useEffect(() => {
-    // Fetch candidates data on page load
     const fetchData = async () => {
       const data = await fetchCandidates();
       setCandidates(data);
     };
     fetchData();
 
-    // Play initial rules audio if the speaker is enabled
     if (isSpeakerEnabled) {
       playAudio("rules");
     }
 
-    // Cleanup: Stop audio when the component is unmounted
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -78,8 +69,6 @@ const CandidateSelection = () => {
     };
   }, [locale, isSpeakerEnabled]);
 
-
-  // Handle candidate selection (selection, deselection, max selection)
   const handleCandidateSelection = (candidateId: number) => {
     const index = selectedCandidates.indexOf(candidateId);
 
@@ -88,7 +77,6 @@ const CandidateSelection = () => {
       setSelectedCandidates(updatedSelection);
       if (isSpeakerEnabled) playAudio("deselect");
 
-      // Track candidate deselection event
       window.gtag("event", "deselect", {
         event_category: "Form Interaction",
         event_label: `Deselect Candidate - ${candidateId}`,
@@ -98,7 +86,6 @@ const CandidateSelection = () => {
         setSelectedCandidates([...selectedCandidates, candidateId]);
         if (isSpeakerEnabled) playAudio("select");
 
-        // Track candidate selection event
         window.gtag("event", "select", {
           event_category: "Form Interaction",
           event_label: `Select Candidate - ${candidateId}`,
@@ -110,10 +97,8 @@ const CandidateSelection = () => {
     }
   };
 
-  // Handle submit
   const handleSubmit = () => {
     if (selectedCandidates.length === 3) {
-      // Track form submission event
       window.gtag("event", "submit", {
         event_category: "Form",
         event_label: "Submit Vote",
@@ -130,7 +115,6 @@ const CandidateSelection = () => {
           };
         }
       } else {
-        // Navigate immediately if speaker is disabled
         router.push({
           pathname: "/pollingBooth/ConfirmVote",
           query: { candidates: JSON.stringify(selectedCandidates) },
@@ -139,16 +123,13 @@ const CandidateSelection = () => {
     } else {
       alert(t("selectExactly3Alert"));
 
-      // Track error event
       window.gtag("event", "error", {
         event_category: "Form",
         event_label: "Incomplete Form - Less than 3 Candidates Selected",
       });
     }
   };
-  
 
-  // Speaker Toggle Handler
   const toggleSpeaker = () => {
     setSpeakerEnabled((prev) => {
       const newState = !prev;
@@ -161,7 +142,6 @@ const CandidateSelection = () => {
     });
   };
 
-  // Play hover sound for submit button
   const handleHoverSubmitButton = () => {
     if (isSpeakerEnabled) playAudio("hover");
   };
@@ -169,7 +149,6 @@ const CandidateSelection = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-[#F1F1F1] to-[#B0D0E6]">
       <Navbar />
-
       <div className="p-6 bg-gradient-to-b from-[#F1F1F1] to-[#B0D0E6] text-[#003366] text-xl font-semibold">
         <h2 className="mb-4 text-4xl">{t("candidateSelectionRulesTitle")}</h2>
         <ul className="list-disc ml-8 text-2xl">
@@ -178,7 +157,6 @@ const CandidateSelection = () => {
           <li>{t("votePreferenceInstructions")}</li>
         </ul>
       </div>
-
       <main className="flex flex-col items-center justify-center flex-grow px-0">
         <div className="w-full max-w-full overflow-x-auto bg-gradient-to-b from-[#F1F1F1] to-[#B0D0E6] border-4 border-gray-300 shadow-lg rounded-lg">
           <table className="table-auto w-full border-collapse text-left text-xl">
@@ -220,36 +198,32 @@ const CandidateSelection = () => {
 
         <button
           onClick={handleSubmit}
-          onMouseEnter={handleHoverSubmitButton} // Trigger hover audio
+          onMouseEnter={handleHoverSubmitButton}
           className="w-96 bg-[#003366] text-white py-8 rounded-full shadow-lg text-3xl font-bold hover:bg-[#005B8D]  mt-12 mb-12"
         >
           {t("submitVoteButton")}
         </button>
       </main>
 
-      {/* Speaker Toggle Button */}
       <div
-  onClick={toggleSpeaker}
-  className="fixed bottom-20 right-14 cursor-pointer"
-  title={isSpeakerEnabled ? "Disable Audio" : "Enable Audio"}
->
-  <img
-    src={isSpeakerEnabled ? "/assets/images/volume.png" : "/assets/images/mute.png"}
-    alt={isSpeakerEnabled ? "Speaker On" : "Speaker Off"}
-    className="w-20 h-20"
-  />
-</div>
-
+        onClick={toggleSpeaker}
+        className="fixed bottom-20 right-14 cursor-pointer"
+        title={isSpeakerEnabled ? "Disable Audio" : "Enable Audio"}
+      >
+        <img
+          src={isSpeakerEnabled ? "/assets/images/volume.png" : "/assets/images/mute.png"}
+          alt={isSpeakerEnabled ? "Speaker On" : "Speaker Off"}
+          className="w-20 h-20"
+        />
+      </div>
     </div>
   );
 };
 
-// Preload translations for the page
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
   props: {
     ...(await serverSideTranslations(locale, ["common"])),
   },
 });
-
 
 export default CandidateSelection;

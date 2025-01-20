@@ -4,8 +4,6 @@ import { useTranslation } from "next-i18next";
 import Navbar from "./navbar";
 import { useRef, useEffect, useState } from "react";
 
-
-// Data for Candidates (this should match the candidate data in CandidateSelection)
 const candidates = [
   { id: 23, name: { en: "Anura Kumara Dissanayake", si: "අනුර කුමාර දිසානායක", ta: "அனுர குமார திசாநாயக்க" }, party: "NPP", symbol: "🌱" },
   { id: 17, name: { en: "Sajith Premadasa", si: "සජිත් ප්‍රේමදාස", ta: "சஜித் பிரேமதாச" }, party: "SJB", symbol: "🌟" },
@@ -33,7 +31,6 @@ const ConfirmVote = () => {
     selectedCandidates.includes(candidate.id)
   );
 
-  // Create the audio element once and reuse it
   useEffect(() => {
     audioRef.current = new Audio();
     return () => {
@@ -45,9 +42,8 @@ const ConfirmVote = () => {
     };
   }, []);
 
-
   const playAudio = (action: string, onEndCallback?: () => void) => {
-    if (!isSpeakerEnabled || !audioRef.current) return; // Respect speaker state
+    if (!isSpeakerEnabled || !audioRef.current) return;
 
     audioRef.current.src = `/audio/${action}_${router.locale}.mp3`;
     audioRef.current.currentTime = 0;
@@ -66,21 +62,16 @@ const ConfirmVote = () => {
   const toggleSpeaker = () => {
     setSpeakerEnabled((prev) => {
       const newState = !prev;
-  
       if (!newState && audioRef.current) {
-        // Pause and reset the audio if the speaker is toggled off
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
       }
-  
       localStorage.setItem("isSpeakerEnabled", JSON.stringify(newState));
       return newState;
     });
   };
-  
 
   const handleBack = () => {
-    // Track button click event
     window.gtag("event", "click", {
       event_category: "Button",
       event_label: "Go Back",
@@ -95,7 +86,6 @@ const ConfirmVote = () => {
   };
 
   const handleConfirm = () => {
-    // Track button click event
     window.gtag("event", "click", {
       event_category: "Button",
       event_label: "Confirm Vote",
@@ -121,22 +111,18 @@ const ConfirmVote = () => {
     }
   }, []);
 
-  // Play "confirm_message" only if the speaker is enabled
   useEffect(() => {
     if (isSpeakerEnabled) {
       playAudio("confirm_message");
     } else if (audioRef.current) {
-      // Stop any ongoing playback if speaker is disabled
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
   }, [isSpeakerEnabled, router.locale]);
-  
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-[#F1F1F1] to-[#B0D0E6]">
       <Navbar />
-
       <main className="flex flex-col items-center justify-center flex-grow px-0">
         <div className="w-full max-w-full overflow-x-auto bg-gradient-to-b from-[#F1F1F1] to-[#B0D0E6] border-4 border-gray-300 shadow-lg rounded-lg">
           <table className="table-auto w-full border-collapse text-left text-lg">
@@ -164,7 +150,6 @@ const ConfirmVote = () => {
             </tbody>
           </table>
         </div>
-
         <div className="mt-6 flex ">
           <button
             onClick={handleBack}
@@ -181,19 +166,17 @@ const ConfirmVote = () => {
             {t("confirmButton")}
           </button>
         </div>
-
         <div
-  onClick={toggleSpeaker}
-  className="fixed bottom-20 right-14 cursor-pointer"
-  title={isSpeakerEnabled ? "Disable Audio" : "Enable Audio"}
->
-  <img
-    src={isSpeakerEnabled ? "/assets/images/volume.png" : "/assets/images/mute.png"}
-    alt={isSpeakerEnabled ? "Speaker On" : "Speaker Off"}
-    className="w-20 h-20"
-  />
-</div>
-
+          onClick={toggleSpeaker}
+          className="fixed bottom-20 right-14 cursor-pointer"
+          title={isSpeakerEnabled ? "Disable Audio" : "Enable Audio"}
+        >
+          <img
+            src={isSpeakerEnabled ? "/assets/images/volume.png" : "/assets/images/mute.png"}
+            alt={isSpeakerEnabled ? "Speaker On" : "Speaker Off"}
+            className="w-20 h-20"
+          />
+        </div>
       </main>
     </div>
   );
