@@ -4,6 +4,17 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import Navbar from "./navbar";
 
+interface Candidate {
+  id: number;
+  name: {
+    en: string;
+    si: string;
+    ta: string;
+  };
+  party: string;
+  symbol: string;
+}
+
 const fetchCandidates = async () => {
   return [
     { id: 23, name: { en: "Anura Kumara Dissanayake", si: "අනුර කුමාර දිසානායක", ta: "அநுர குமார திசாநாயக்க" }, party: "NPP", symbol: "🌱" },
@@ -24,7 +35,7 @@ const CandidateSelection = () => {
   const { locale } = router;
   const { t } = useTranslation();
 
-  const [candidates, setCandidates] = useState<any[]>([]);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [selectedCandidates, setSelectedCandidates] = useState<number[]>([]);
   const [isSpeakerEnabled, setSpeakerEnabled] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);

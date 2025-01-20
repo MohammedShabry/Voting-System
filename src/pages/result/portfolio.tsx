@@ -67,8 +67,8 @@ const CandidatePortfolio: React.FC = () => {
     <div id="about" style={{ padding: "20px", backgroundColor: "#ffffff" }}>
       <div className="max-w-[1240px] m-auto md:grid grid-cols-3 gap-8">
         <div className="col-span-2">
-          <h1 className="text-4xl font-bold mb-4 text-black">Hello, I’m Namal Perera </h1>
-          <h2 className="text-xl font-bold mb-4 text-black">NPP- National People Party </h2>
+          <h1 className="text-4xl font-bold mb-4 text-black">Hello, I&rsquo;m Namal Perera </h1>
+          <h2 className="text-xl font-bold mb-4 text-black">NPP- National People&rsquo;s Party </h2>
           <p className="text-xl text-black">
             <span className="font-bold custom-class text-3xl">❝</span>
             As a dedicated public servant, I am committed to fostering transparency,
