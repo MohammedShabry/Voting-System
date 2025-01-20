@@ -49,7 +49,7 @@ const handleOpen = () => {
 // Add state for comments and new comment
 const [comments, setComments] = useState<string[]>([]);
 const [newComment, setNewComment] = useState("");
-const [currentView, setCurrentView] = useState('home'); // State to toggle views
+ // State to toggle views
 
 // Handler to post a comment
 const handlePostComment = () => {
@@ -58,31 +58,7 @@ const handlePostComment = () => {
   setNewComment(""); // Clear input field
 };
 
-// Portfolio card data
-const portfolioData = [
-    {
-      title: "Bio",
-      DOB:"15-04-1966",
-      CS:"Married",
-      religion:"Buddhism",
-      image: "/assets/images/profile.png",
-      link: "https://www.example.com/project1",
-    },
-    {
-      title: "Education",
-      description:
-        "A user-friendly mobile app design for e-commerce platforms with smooth navigation and user interface.",
-      image: "/assets/images/profile.png",
-      link: "https://www.example.com/project2",
-    },
-    {
-      title: "Professional Experience",
-      description:
-        "A decentralized application (DApp) built using Ethereum and Solidity, demonstrating smart contract interaction.",
-      image: "/assets/images/profile.png",
-      link: "https://www.example.com/project3",
-    },
-  ];
+
     // Line chart data for two graphs
     const lineChartData1 = {
         labels: ["1999", "2005", "2010", "2015", "2019","2024"],
