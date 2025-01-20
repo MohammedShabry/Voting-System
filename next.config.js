@@ -22,18 +22,6 @@ module.exports = {
     }
     config.resolve.alias['@'] = path.resolve(__dirname);
 
-    // Add Babel loader for JSX and TypeScript files
-    config.module.rules.push({
-      test: /\.(js|jsx|ts|tsx)$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-        options: {
-          presets: ['next/babel'],
-        },
-      },
-    });
-
     return config;
   },
 };
