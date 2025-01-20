@@ -4,27 +4,20 @@ import { useEffect, useState } from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Navbar from "./navbar";
 
-
-// Audio utility for controlling playback
 let currentAudio: HTMLAudioElement | null = null;
 
 const playAudio = (audioFile: string, onEnded: () => void, isSpeakerEnabled: boolean) => {
-  // If speaker is disabled, stop current audio immediately
   if (!isSpeakerEnabled) {
     if (currentAudio) {
       currentAudio.pause();
-      currentAudio = null; // Clear the current audio reference
+      currentAudio = null;
     }
-    return; // Prevent further audio playback
+    return;
   }
-
-  // Stop any ongoing audio playback
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
-
-  // Play new audio
   currentAudio = new Audio(audioFile);
   currentAudio.play();
   currentAudio.onended = onEnded;
@@ -34,19 +27,16 @@ const LanguageSelection = () => {
   const router = useRouter();
   const { i18n } = useTranslation();
   const [audioPlayed, setAudioPlayed] = useState(false);
-  const [isSpeakerEnabled, setSpeakerEnabled] = useState(false); // Speaker is initially off
+  const [isSpeakerEnabled, setSpeakerEnabled] = useState(false);
 
-  // Save speaker state to localStorage whenever it changes
   useEffect(() => {
     try {
       localStorage.setItem("isSpeakerEnabled", JSON.stringify(isSpeakerEnabled));
-      console.log("Speaker state saved to localStorage:", isSpeakerEnabled); // Log the saved value
     } catch (error) {
       console.error("Error saving speaker state to localStorage:", error);
     }
   }, [isSpeakerEnabled]);
 
-  // Stop audio when navigating away from this page
   useEffect(() => {
     const handleRouteChange = () => {
       if (currentAudio) {
@@ -62,7 +52,6 @@ const LanguageSelection = () => {
     };
   }, [router.events]);
 
-  // Play welcome audio on page load (only if speaker is enabled)
   useEffect(() => {
     if (!audioPlayed && isSpeakerEnabled) {
       playAudio(
@@ -84,6 +73,11 @@ const LanguageSelection = () => {
   }, [audioPlayed, isSpeakerEnabled]);
 
   const handleLanguageChange = (locale: string) => {
+    window.gtag("event", "click", {
+      event_category: "Button",
+      event_label: `Select Language - ${locale}`,
+    });
+
     let audioFile = "";
     switch (locale) {
       case "si":
@@ -98,7 +92,6 @@ const LanguageSelection = () => {
         break;
     }
 
-    // If speaker is enabled, play the audio first, then navigate
     if (isSpeakerEnabled) {
       playAudio(audioFile, () => {
         i18n.changeLanguage(locale).then(() => {
@@ -106,7 +99,6 @@ const LanguageSelection = () => {
         });
       }, isSpeakerEnabled);
     } else {
-      // If speaker is disabled, skip audio and navigate directly
       i18n.changeLanguage(locale).then(() => {
         router.push("/pollingBooth/voterAuthentication", undefined, { locale });
       });
@@ -133,13 +125,10 @@ const LanguageSelection = () => {
   const toggleSpeaker = () => {
     setSpeakerEnabled((prev) => {
       const newState = !prev;
-
-      // Stop the audio if the speaker is turned off
       if (!newState && currentAudio) {
         currentAudio.pause();
         currentAudio = null;
       }
-
       return newState;
     });
   };
@@ -147,7 +136,6 @@ const LanguageSelection = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-[#F1F1F1] to-[#B0D0E6]">
       <Navbar />
-
       <main className="flex flex-col items-center justify-center flex-grow px-6">
         <h2 className="text-center my-12 text-[#003366]">
           <div className="text-5xl font-semibold mb-6">
@@ -160,7 +148,6 @@ const LanguageSelection = () => {
             <span>தயவுசெய்து மொழியைத் தேர்வு  செய்யுங்கள்</span>
           </div>
         </h2>
-
         <div className="space-y-6 ">
           <button
             onClick={() => handleLanguageChange("si")}
@@ -185,25 +172,21 @@ const LanguageSelection = () => {
           </button>
         </div>
       </main>
-
       <div
-  onClick={toggleSpeaker}
-  className="fixed bottom-20 right-14 cursor-pointer"
-  title={isSpeakerEnabled ? "Disable Audio" : "Enable Audio"}
->
-  <img
-    src={isSpeakerEnabled ? "/assets/images/volume.png" : "/assets/images/mute.png"}
-    alt={isSpeakerEnabled ? "Speaker On" : "Speaker Off"}
-    className="w-20 h-20"
-  />
-</div>
-
-
+        onClick={toggleSpeaker}
+        className="fixed bottom-20 right-14 cursor-pointer"
+        title={isSpeakerEnabled ? "Disable Audio" : "Enable Audio"}
+      >
+        <img
+          src={isSpeakerEnabled ? "/assets/images/volume.png" : "/assets/images/mute.png"}
+          alt={isSpeakerEnabled ? "Speaker On" : "Speaker Off"}
+          className="w-20 h-20"
+        />
+      </div>
     </div>
   );
 };
 
-// Preload translations for the page
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
   props: {
     ...(await serverSideTranslations(locale, ["common"])),

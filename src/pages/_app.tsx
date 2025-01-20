@@ -3,7 +3,7 @@ import type { AppProps } from "next/app";
 import nextI18NextConfig from "../../next-i18next.config.js";
 import { UserConfig } from "next-i18next";
 import { appWithTranslation } from "next-i18next";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Script from "next/script";
 
@@ -23,11 +23,11 @@ const emptyInitialI18NextConfig: UserConfig = {
 
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  let startTime: number;
+  const startTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
     const handleRouteChange = (url: string) => {
-      const timeSpent = Date.now() - startTime; // Calculate time spent on the previous page
+      const timeSpent = Date.now() - startTimeRef.current; // Calculate time spent on the previous page
       window.gtag("event", "time_on_page", {
         event_category: "engagement",
         event_label: url,
@@ -46,11 +46,11 @@ function App({ Component, pageProps }: AppProps) {
       });
 
       // Reset start time for the new page
-      startTime = Date.now();
+      startTimeRef.current = Date.now();
     };
 
     // Initialize start time
-    startTime = Date.now();
+    startTimeRef.current = Date.now();
 
     // Track initial page load
     window.gtag("config", process.env.NEXT_PUBLIC_GA_ID || "G-Y8QX8C658S", {
