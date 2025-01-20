@@ -144,8 +144,8 @@ const CandidatePortfolio: React.FC = () => {
             <div className="p-4 bg-white rounded-b-xl">
               <h3 className="text-xl font-bold text-black">Education Qualifications</h3>
               <ul className="text-gray-600 mt-2 space-y-2">
-                <li><strong>Bachelor's Degree:</strong> B.Sc. in Computer Science, XYZ University, 2012</li>
-                <li><strong>Master's Degree:</strong> M.Sc. in Data Science, ABC University, 2015</li>
+                <li><strong>Bachelor&apos;s Degree:</strong> B.Sc. in Computer Science, XYZ University, 2012</li>
+                <li><strong>Master&apos;s Degree:</strong> M.Sc. in Data Science, ABC University, 2015</li>
                 <li><strong>Certifications:</strong> AWS Certified Solutions Architect, 2018</li>
                 <li><strong>High School:</strong> High School Diploma, ABC High School, 2008</li>
               </ul>

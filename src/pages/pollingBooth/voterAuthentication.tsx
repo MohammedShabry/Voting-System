@@ -18,7 +18,6 @@ const VoterAuthentication = () => {
   const router = useRouter();
   const { locale } = router;
   const { t } = useTranslation();
-  const [isCameraActive, setCameraActive] = useState<boolean>(false);
   const [isLoading, setLoading] = useState<boolean>(false);
   const [audioInstance, setAudioInstance] = useState<HTMLAudioElement | null>(null);
   const [isSpeakerEnabled, setSpeakerEnabled] = useState<boolean>(false);
@@ -50,7 +49,6 @@ const VoterAuthentication = () => {
 
   const startCamera = () => {
     setLoading(true);
-    setCameraActive(true);
     window.gtag("event", "click", {
       event_category: "Button",
       event_label: "Start Camera",
